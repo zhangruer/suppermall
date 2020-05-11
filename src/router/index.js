@@ -18,15 +18,18 @@ const routes = [
   },
   {
     path: '/home',
-    component: home
+    component: home,
+    meta: {title: '首页'}
   },
   {
     path: '/cart',
-    component: cart
+    component: cart,
+    meta: {title: '购物车'}
   },
   {
     path: '/category',
-    component: category
+    component: category,
+    meta: {title: '分类'}
   },
   {
     path: '/detail/:iid',
@@ -34,15 +37,26 @@ const routes = [
   },
   {
     path: '/profile',
-    component: profile
+    component: profile,
+    meta: {title: '我的'}
   }
 ];
 
 // 3、创建路由对象
 const router = new VueRouter({
+  // 配置路由组件之间的应用关系
   mode: 'history',
-  routes
+  routes,
+  linkActiveClass: 'active'
 });
+
+// 前置钩子
+// 页面跳转显示对应页面的title
+// router.beforeEach((to, from, next) => {
+//   // 从from跳转到to
+//   document.title = to.matched[0].meta.title
+//   next()
+// })
 
 // 4、导出
 export default router;

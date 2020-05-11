@@ -35,10 +35,13 @@ import scroll from "components/common/scroll/scroll";
 import backTop from "components/content/backTop/backTop";
 
 import { getHomeMultidata, getHomeGoods } from "network/home";
-import { debounce } from "common/utiles.js";
+// import { debounce } from "../../common/utiles";
+import { itemListenerMixin } from "../../common/minin"
+
 
 export default {
   name: "home",
+  mixins: [itemListenerMixin],
   data() {
     return {
       msg: "",
@@ -75,17 +78,6 @@ export default {
     this.getHomeGoods('sell')
     
   },
-  mounted() {
-    // 3.监听item中的图片是否加载完成
-    // 解决better-SCROLL可滚动区域的问题，图片加载完成之后有了新的高度，但better-scrolll的scrollerHeight没有更新，
-    // 监听每一张图片是否加载完成img.onload=function(){}，只要一张图片加载完成了，就执行一次refresh（）
-    const refresh = debounce(this.$refs.scroll.refresh, 200) // 防抖
-    this.$bus.$on('itemImageLoad', () => {
-      // console.log('首页bus监听图片加载完成---')
-      // this.$refs.scroll.refresh()
-      refresh()
-    })
-  },
   computed: {
     showGoods () {
       return this.goods[this.currentType].list
@@ -97,8 +89,12 @@ export default {
     this.$refs.scroll.refresh()
   },
   deactivated() {
+    // 1.保存Y值
     this.saveY = this.$refs.scroll.getSrcollY()
     console.log(this.saveY)
+
+    // 2.取消全局事件监听
+    this.$bus.$off('itemImageLoad', this.ItemImageLister)
   },
   methods: {
     /**
